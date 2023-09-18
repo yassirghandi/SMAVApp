@@ -1,0 +1,512 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block ExtraCss %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/dashboard.css' %}">
+{% endblock ExtraCss %}
+
+{% block header %}{% endblock header %}
+
+{% block content %}
+<article>
+  <div class="container-fluid">
+    <nav class="main__navbar navbar navbar-expand-lg navbar-dark" id="mobile-mavbar">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'authentication:HomeView' %}">
+          SMAV
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarScroll"
+          aria-controls="navbarScroll"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarScroll">
+    
+          {% if request.user.is_authenticated %}
+          <ul
+            class="navbar-nav my-2 my-lg-0 ms-auto navbar-nav-scroll align-items-center"
+          >
+            <li class="nav-item dropdown ms-auto">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="navbarScrollingDropdown"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <img
+                  src="{{request.user.get_image_url}}"
+                  alt="{{request.user.username}}"
+                  width="50px"
+                  height="50px"
+                  style="object-fit: cover; border-radius: 50%"
+                />
+              </a>
+              <ul
+                class="dropdown-menu dropdown-menu-end"
+                aria-labelledby="navbarScrollingDropdown"
+              >
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="{% url 'authentication:ProfileView' %}"
+                    >Manage Profile</a
+                  >
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="{% url 'authentication:ChangePasswordView' %}"
+                    >Change Password</a
+                  >
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="{% url 'authentication:LogoutView' %}"
+                    >Logout</a
+                  >
+                </li>
+              </ul>
+            </li>
+          </ul>
+          {% else %}
+          <ul class="navbar-nav my-2 my-lg-0 ms-auto navbar-nav-scroll">
+            <div class="d-flex">
+              <a
+                href="{% url 'authentication:LoginView' %}"
+                class="btn btn-warning btn-sm mx-2"
+              >
+                Login
+              </a>
+              <a
+                href="{% url 'authentication:RegisterView' %}"
+                class="btn btn-warning btn-sm mx-2"
+              >
+                Sign up
+              </a>
+            </div>
+          </ul>
+          {% endif %}
+        </div>
+      </div>
+    </nav>
+
+    <nav class="navbar fixed-top bg-body-tertiary" id="main-mavbar">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1">SMAV</span>
+        </div>
+    </nav>
+    <div class="wrapper">
+        <div class="side-bar">
+            <ul class="list-group list-group-flush">
+                {% if request.user.is_authenticated %}
+                  <li class="list-group-item">
+                    <a href="{% url 'authentication:HomeView' %}">
+                      Home
+                    </a>
+                  </li>
+                  <li class="list-group-item">
+                    <a href="{% url 'authentication:ProfileView' %}">
+                      Profile
+                    </a>
+                  </li>
+                  <li class="list-group-item">
+                    <a href="{% url 'authentication:LogoutView' %}">
+                      Logout
+                    </a>
+                  </li>
+                {% endif %}
+            </ul>
+        </div>
+        <div class="main">
+            <section>
+                <h5><small>Current conditions</small></h5>
+                <section class="conditions">
+                    {% with device.latest_data as latest_data %}
+                      <div class="card">
+                          <div class="card-body text-center">
+                              <h6><small class="text-muted">Temperature 1</small></h6>
+                              <div class="yellow-text">{{ latest_data.temperature1 }}°c</div>
+                          </div>
+                      </div>
+                      <div class="card">
+                          <div class="card-body">
+                              <h6><small class="text-muted">Dew point 1</small></h6>
+                              <div class="yellow-text">{{ latest_data.dew_point }}°c</div>
+                          </div>
+                      </div>
+                      <div class="card">
+                          <div class="card-body text-center">
+                              <h6><small class="text-muted">Temperature 2</small></h6>
+                              <div class="yellow-text">{{ latest_data.temperature2 }}°c</div>
+                          </div>
+                      </div>
+                      <div class="card">
+                          <div class="card-body">
+                              <h6><small class="text-muted">Dew point 2</small></h6>
+                              <div class="yellow-text">{{ latest_data.dew_point2 }}°c</div>
+                          </div>
+                      </div>
+                      <div class="card">
+                          <div class="card-body">
+                              <h6><small class="text-muted">Relative</small></h6>
+                              <div class="yellow-text">{{ latest_data.humidity1 }}%</div>
+                          </div>
+                      </div>
+                      <div class="card">
+                          <div class="card-body">
+                              <h6><small class="text-muted">Relative 2</small></h6>
+                              <div class="yellow-text">{{ latest_data.humidity2 }}%</div>
+                          </div>
+                      </div>
+                      <div class="card">
+                          <div class="card-body">
+                              <h6><small class="text-muted">Wind</small></h6>
+                              <div class="yellow-text">{{ latest_data.wind }}<small class="sm">(km/hr)</small></div>
+                          </div>
+                      </div>
+                      <div class="card">
+                          <div class="card-body">
+                              <h6><small class="text-muted">Gas</small></h6>
+                              <div class="yellow-text">{{ latest_data.gas }}%</div>
+                          </div>
+                      </div>
+                      <div class="card">
+                          <div class="card-body">
+                            <h6><small class="text-muted">Battery Voltage</small></h6>
+                            <div class="yellow-text">{{ latest_data.voltage }}V</div>
+                          </div>
+                      </div>
+                      <div class="card">
+                          <div class="card-body">
+                              <h6><small class="text-muted">Machine Status</small></h6>
+                              <div class="yellow-text">
+                                {% if latest_data.machineStatus >= 12 %}
+                                  On
+                                {% else %}
+                                  Off
+                                {% endif %}
+                              </div>
+                          </div>
+                      </div>
+                      {% comment %} <div class="card">
+                          <div class="card-body">
+                              <h6><small class="text-muted">Battery (Voltage)</small></h6>
+                              <div class="yellow-text">
+                                {{ latest_data.volBat }}V
+                              </div>
+                          </div>
+                      </div> {% endcomment %}
+                    {% endwith %}
+                </section>
+            </section>
+            <section>
+                <h5><small>Historic conditions</small></h5>
+                <select id="historic-select" class="form-control my-3 w-25 hidden">
+                  <option value="1">Last 1 hour</option>
+                  <option value="6">Last 6 hour</option>
+                  <option value="24">Last 24 hour</option>
+                  <option value="48">Last 48 hour</option>
+                </select>
+                <div class="H-conditions">
+                    <div class="card graph-cont">
+                      <div class="card-body">
+                        <p class="title">Temprature 1</p>
+                        <canvas id="chart-temprature1" style="width:100%;"></canvas>
+                        <div class="chart-loader">
+                          <div class="spinner-border text-dark" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card graph-cont">
+                      <div class="card-body">
+                        <p class="title">Temperature 2</p>
+                        <canvas id="chart-temprature2" style="width:100%;"></canvas>
+                        <div class="chart-loader">
+                          <div class="spinner-border text-dark" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card graph-cont">
+                      <div class="card-body">
+                        <p class="title">Gas</p>
+                        <canvas id="chart-gas" style="width:100%;"></canvas>
+                        <div class="chart-loader">
+                          <div class="spinner-border text-dark" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card graph-cont">
+                      <div class="card-body">
+                        <p class="title">Wind Speed</p>
+                        <canvas id="chart-wind" style="width:100%;"></canvas>
+                        <div class="chart-loader">
+                          <div class="spinner-border text-dark" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card graph-cont">
+                      <div class="card-body">
+                        <p class="title">Battery Voltage</p>
+                        <canvas id="chart-battery" style="width:100%;"></canvas>
+                        <div class="chart-loader">
+                          <div class="spinner-border text-dark" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card graph-cont">
+                      <div class="card-body">
+                        <p class="title">Machine Status</p>
+                        <canvas id="chart-machine" style="width:100%;"></canvas>
+                        <div class="chart-loader">
+                          <div class="spinner-border text-dark" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+    </div>
+  </div>
+</article>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.2.1/dist/chart.umd.min.js"></script>
+{% comment %} <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script> {% endcomment %}
+
+<script>
+  window.onload = () => {
+    const historicSelect = document.getElementById('historic-select');
+    const temperature1 = document.getElementById('chart-temprature1');
+    const temperature2 = document.getElementById('chart-temprature2');
+    const gas = document.getElementById('chart-gas');
+    const wind = document.getElementById('chart-wind');
+    const battery = document.getElementById('chart-battery');
+    const machine = document.getElementById('chart-machine');
+    const chartLoaders = document.querySelectorAll('.chart-loader');
+
+    function fetchData(params="") {
+      console.log("fetching chart data")
+      fetch("{% url 'get_graph_data' device.id %}"+params)
+          .then(response => response.json())
+          .then(data => renderGraphs(data))
+          .catch(err => console.error(err));
+    }
+    fetchData();
+
+    function renderGraphs(data) {
+      hideLoaders();
+      var xValues = [];
+      var yValues = data?.temperature1_data;
+      var yValuesDewPoint = data?.dew_point_data;
+      for (let i = 0; i < yValues.length; i++) {
+        xValues.push(`${i+1}h`);
+      }
+  
+      var xValues2 = [];
+      var yValues2 = data?.temperature2_data;
+      var yValues2DewPoint = data?.dew_point2_data;
+      for (let i = 0; i < yValues2.length; i++) {
+        xValues2.push(`${i+1}h`);
+      }
+  
+      var xValues3 = [];
+      var yValues3 = data?.gas_data;
+      for (let i = 0; i < yValues3.length; i++) {
+        xValues3.push(`${i+1}h`);
+      }
+  
+      var xValues4 = [];
+      var yValues4 = data?.wind_data;
+      for (let i = 0; i < yValues4.length; i++) {
+        xValues4.push(`${i+1}h`);
+      }
+  
+      var xValues5 = [];
+      var yValues5 = data?.battery_data;
+      for (let i = 0; i < yValues5.length; i++) {
+        xValues5.push(`${i+1}h`);
+      }
+  
+      var xValues6 = [];
+      var yValues6 = data?.machine_data;
+      for (let i = 0; i < yValues6.length; i++) {
+        xValues6.push(`${i+1}h`);
+      }
+  
+      new Chart(temperature1, {
+        type: "line",
+        data: {
+          labels: xValues,
+          datasets: [{
+            label: "Celcius",
+            lineTension: 0,
+            backgroundColor: "rgba(115, 191, 105, 0.3)",
+            borderColor: "rgba(115, 191, 105, 1)",
+            data: yValues,
+            fill: true
+          },
+          {
+            label: "Dew Point",
+            lineTension: 0,
+            backgroundColor: "rgba(235, 123, 24, 0.3)",
+            borderColor: "rgba(235, 123, 24, 1)",
+            data: yValuesDewPoint,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {display: false},
+          }
+        }
+      });
+  
+      new Chart(temperature2, {
+        type: "line",
+        data: {
+          labels: xValues2,
+          datasets: [{
+            label: "Celcius",
+            lineTension: 0,
+            backgroundColor: "rgba(115, 191, 105, 0.3)",
+            borderColor: "rgba(115, 191, 105, 1)",
+            data: yValues2,
+            fill: true
+          },
+          {
+            label: "Dew Point",
+            lineTension: 0,
+            backgroundColor: "rgba(235, 123, 24, 0.3)",
+            borderColor: "rgba(235, 123, 24, 1)",
+            data: yValues2DewPoint,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {display: false},
+          }
+        }
+      });
+
+      new Chart(gas, {
+        type: "line",
+        data: {
+          labels: xValues3,
+          datasets: [{
+            label: "%",
+            lineTension: 0,
+            backgroundColor: "rgba(115, 191, 105, 0.3)",
+            borderColor: "rgba(115, 191, 105, 1)",
+            data: yValues3,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {display: false},
+          }
+        }
+      });
+
+      new Chart(wind, {
+        type: "line",
+        data: {
+          labels: xValues4,
+          datasets: [{
+            label: "%",
+            lineTension: 0,
+            backgroundColor: "rgba(115, 191, 105, 0.3)",
+            borderColor: "rgba(115, 191, 105, 1)",
+            data: yValues4,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {display: false},
+          }
+        }
+      });
+
+      new Chart(battery, {
+        type: "line",
+        data: {
+          labels: xValues5,
+          datasets: [{
+            label: "Voltage",
+            lineTension: 0,
+            backgroundColor: "rgba(115, 191, 105, 0.3)",
+            borderColor: "rgba(115, 191, 105, 1)",
+            data: yValues5,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {display: false},
+          }
+        }
+      });
+
+      new Chart(machine, {
+        type: "line",
+        data: {
+          labels: xValues6,
+          datasets: [{
+            label: "Machine Status",
+            lineTension: 0,
+            backgroundColor: "rgba(115, 191, 105, 0.3)",
+            borderColor: "rgba(115, 191, 105, 1)",
+            data: yValues6,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {display: false},
+          }
+        }
+      });
+    }
+
+    function hideLoaders() {
+      chartLoaders.forEach(loader => {
+        loader.classList.toggle("hidden", true);
+      })
+    }
+
+    historicSelect.addEventListener('change', (e) => {
+      fetchData(`?hour=${historicSelect.value}`);
+    })
+
+  }
+</script>
+{% endblock content %}

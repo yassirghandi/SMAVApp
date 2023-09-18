@@ -1,0 +1,100 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.navbar {
+    z-index: 10;
+    margin-bottom: 10px;
+    padding: 10px !important;
+    position: absolute;
+}
+
+.container-fluid {
+    --bs-gutter-x: 0 !important;
+}
+
+.wrapper {
+    width: 100%;
+    display: flex;
+    margin: 70px 0;
+    position: relative;
+}
+
+.side-bar {
+    width: 20%;
+    padding: 58px 10px;
+    height: 100%;
+    z-index: 1;
+    position: fixed;
+    overflow-y: scroll;
+    top: 0;
+    bottom: 0;
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+}
+
+.main {
+    width: 80%;
+    position: relative;
+    margin-left: 20%;
+    /* Same as the width of the sidebar */
+    padding: 0px 10px;
+}
+
+.conditions {
+    width: 100% !important;
+    display: flex;
+    margin-bottom: 15px;
+}
+
+.conditions .card {
+    padding: 10px;
+    width: 20% !important;
+    margin-right: 10px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.H-conditions {
+    width: 100%;
+    display: flex;
+}
+
+.H-conditions .card {
+    width: 40%;
+    height: 300px;
+    margin-right: 10px;
+}
+
+.blue-text {
+    color: rgb(37, 135, 192);
+    font-size: 2.5rem;
+    font-weight: 600;
+}
+
+.green-text {
+    color: rgb(68, 177, 68);
+    font-size: 2.5rem;
+    font-weight: 400;
+}
+
+.white-text {
+    /* color: #fff; */
+    color: black;
+    font-size: 2.5rem;
+    font-weight: 600;
+}
+
+.card-body {
+    padding: 5px !important;
+}
+
+.sm {
+    font-size: 1.125rem;
+}

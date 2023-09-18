@@ -1,0 +1,244 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block ExtraCss %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/dashboard.css' %}">
+{% endblock ExtraCss %}
+
+{% block header %}{% endblock header %}
+
+{% block content %}
+<article>
+  <div class="container-fluid">
+    <nav class="main__navbar navbar navbar-expand-lg navbar-dark" id="mobile-mavbar">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'authentication:HomeView' %}">
+          SMAV
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarScroll"
+          aria-controls="navbarScroll"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarScroll">
+    
+          {% if request.user.is_authenticated %}
+          <ul
+            class="navbar-nav my-2 my-lg-0 ms-auto navbar-nav-scroll align-items-center"
+          >
+            <li class="nav-item dropdown ms-auto">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="navbarScrollingDropdown"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <img
+                  src="{{request.user.get_image_url}}"
+                  alt="{{request.user.username}}"
+                  width="50px"
+                  height="50px"
+                  style="object-fit: cover; border-radius: 50%"
+                />
+              </a>
+              <ul
+                class="dropdown-menu dropdown-menu-end"
+                aria-labelledby="navbarScrollingDropdown"
+              >
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="{% url 'authentication:ProfileView' %}"
+                    >Manage Profile</a
+                  >
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="{% url 'authentication:ChangePasswordView' %}"
+                    >Change Password</a
+                  >
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="{% url 'authentication:LogoutView' %}"
+                    >Logout</a
+                  >
+                </li>
+              </ul>
+            </li>
+          </ul>
+          {% else %}
+          <ul class="navbar-nav my-2 my-lg-0 ms-auto navbar-nav-scroll">
+            <div class="d-flex">
+              <a
+                href="{% url 'authentication:LoginView' %}"
+                class="btn btn-warning btn-sm mx-2"
+              >
+                Login
+              </a>
+              <a
+                href="{% url 'authentication:RegisterView' %}"
+                class="btn btn-warning btn-sm mx-2"
+              >
+                Sign up
+              </a>
+            </div>
+          </ul>
+          {% endif %}
+        </div>
+      </div>
+    </nav>
+
+    <nav class="navbar fixed-top bg-body-tertiary" id="main-mavbar">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1">SMAV</span>
+        </div>
+    </nav>
+
+    <div class="wrapper">
+        <div class="side-bar">
+            <ul class="list-group list-group-flush">
+                {% if request.user.is_authenticated %}
+                  <li class="list-group-item">
+                    <a href="{% url 'authentication:HomeView' %}">
+                      Home
+                    </a>
+                  </li>
+                  <li class="list-group-item">
+                    <a href="{% url 'authentication:ProfileView' %}">
+                      Profile
+                    </a>
+                  </li>
+                  <li class="list-group-item">
+                    <a href="{% url 'authentication:LogoutView' %}">
+                      Logout
+                    </a>
+                  </li>
+                {% endif %}
+            </ul>
+        </div>
+        <div class="main">
+            <section>
+              <h5><small>Devices</small></h5>
+              <div class="card p-2" style="border-radius: 25px;">
+                <table class="table mt-4">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Name</th>
+                      <th scope="col">IMEI</th>
+                      <th scope="col">T1</th>
+                      <th scope="col">Machine Status</th>
+                      <th scope="col">View</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for device in devices %}
+                      <tr>
+                        <th scope="row">{{ forloop.counter }}</th>
+                        <td>
+                          <a href="{% url 'edit_device' device.id %}" class="text-dark">
+                            {{ device.name }}
+                          </a>
+                        </td>
+                        <td>{{ device.imei }}</td>
+                        <td>{{ device.latest_data.temperature1 }}°c</td>
+                        <td>
+                          {% if latest_data.machineStatus >= 12 %}
+                            On
+                          {% else %}
+                            Off
+                          {% endif %}
+                        </td>
+                        <td>
+                          <a href="{% url 'DeviceStats' device.id %}" class="btn btn-warning btn-sm">
+                            View Stats
+                          </a>
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+        </div>
+    </div>
+  </div>
+</article>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.2.1/dist/chart.umd.min.js"></script>
+{% comment %} <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script> {% endcomment %}
+
+<script>
+  window.onload = () => {
+    const ctx1 = document.getElementById('chart-temprature');
+    const ctx2 = document.getElementById('chart-rainfall');
+    var xValues = [50,60,70,80,90,100,110,120,130,140,150];
+    var yValues = [7,8,8,9,9,9,10,11,14,14,15];
+    var yValues2 = [14,8,8,10,13,10,10,10,14,14,10].reverse();
+    var yValues3 = [15,10, 15,15,20,10,10,10,15,0,0]
+
+    new Chart(ctx1, {
+      type: "line",
+      data: {
+        labels: xValues,
+        datasets: [{
+          lineTension: 0,
+          backgroundColor: "rgba(115, 191, 105, 0.3)",
+          borderColor: "rgba(115, 191, 105, 1)",
+          data: yValues,
+          fill: true
+        },
+        {
+          lineTension: 0,
+          backgroundColor: "rgba(234, 184, 57, 0.3)",
+          borderColor: "rgba(234, 184, 57, 1)",
+          data: yValues2,
+          fill: true
+        }]
+      },
+      options: {
+        plugins: {
+          legend: {display: false},
+        }
+      }
+    });
+
+    new Chart(ctx2, {
+      type: "line",
+      data: {
+        labels: xValues,
+        datasets: [{
+          lineTension: 0,
+          backgroundColor: "rgba(115, 191, 105, 0.3)",
+          borderColor: "rgba(115, 191, 105, 1)",
+          data: yValues3,
+          fill: true,
+          stepped: true,
+        }],
+      },
+      options: {
+        responsive: true,
+        interaction: {
+          intersect: false,
+          axis: 'x'
+        },
+        plugins: {
+          legend: {display: false},
+        }
+      }
+    });
+
+  }
+</script>
+{% endblock content %}
